@@ -1,6 +1,4 @@
 import Link from "next/link";
-
-import PlaceholderContent from "@/components/demo/placeholder-content";
 import { ContentLayout } from "@/components/admin-panel/content-layout";
 import {
   Breadcrumb,
@@ -10,10 +8,15 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
+// import { useSidebar } from "@/hooks/use-sidebar";
+// import { useStore } from "@/hooks/use-store";
 
-export default function TagsPage() {
+export default function DashboardPage() {
+  // const sidebar = useStore(useSidebar, (x) => x);
+  // if (!sidebar) return null;
+  // const { settings, setSettings } = sidebar;
   return (
-    <ContentLayout title="Tags">
+    <ContentLayout title="Dashboard">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -23,17 +26,12 @@ export default function TagsPage() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/dashboard">Dashboard</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Tags</BreadcrumbPage>
+            <BreadcrumbPage>Dashboard</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <PlaceholderContent />
+
+      <div></div>
     </ContentLayout>
   );
 }

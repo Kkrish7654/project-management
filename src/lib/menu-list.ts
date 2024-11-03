@@ -5,8 +5,10 @@ import {
   Bookmark,
   SquarePen,
   LayoutGrid,
-  LucideIcon
+  LucideIcon,
+  FolderKanban,
 } from "lucide-react";
+
 
 type Submenu = {
   href: string;
@@ -45,28 +47,28 @@ export function getMenuList(pathname: string): Group[] {
       menus: [
         {
           href: "",
-          label: "Posts",
-          icon: SquarePen,
+          label: "Projects",
+          icon: FolderKanban,
           submenus: [
             {
-              href: "/posts",
-              label: "All Posts"
+              href: "/projects",
+              label: "All Projects"
             },
             {
-              href: "/posts/new",
-              label: "New Post"
+              href: "/projects/new",
+              label: "New Project"
             }
           ]
         },
         {
-          href: "/categories",
-          label: "Categories",
-          icon: Bookmark
+          href: "/tasks",
+          label: "Tasks",
+          icon: SquarePen
         },
         {
-          href: "/tags",
-          label: "Tags",
-          icon: Tag
+          href: "/teams",
+          label: "Teams",
+          icon: Users
         }
       ]
     },
