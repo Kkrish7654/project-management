@@ -10,7 +10,7 @@ import {
   horizontalListSortingStrategy
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { LucideEllipsis } from "lucide-react";
+import { LucideEllipsis, Plus } from "lucide-react";
 
 const AvatarGroup = () => {
   const avatars = [
@@ -82,7 +82,7 @@ const ProjectBoard = ({
           </Button>
         </div>
 
-        <Card className="mt-4 flex flex-col gap-2 p-4 bg-primary-foreground">
+        <Card className="mt-4 flex flex-col gap-2 p-4 bg-primary-foreground min-h-40">
           <SortableContext
             items={items.map((task) => task.id)}
             strategy={verticalListSortingStrategy}
@@ -90,6 +90,10 @@ const ProjectBoard = ({
             {items?.map((item, i: number) => (
               <BoardCard key={item.id} item={item} />
             ))}
+            <Button variant="secondary">
+              <Plus size={12} />
+              Create Card
+            </Button>
           </SortableContext>
         </Card>
       </div>

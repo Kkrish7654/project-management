@@ -3,6 +3,7 @@ import { TeamMember } from "./project.type";
 export type TaskStatus = "Pending" | "Development" | "Testing" | "Completed";
 export type TaskPriority = "Low" | "Medium" | "High";
 export type TaskGroup = "In Progress" | "On Hold" | "Overdue" | "Completed";
+export type ViewType = "List" | "Board";
 export type TaskType = {
   id: number;
   name: string;

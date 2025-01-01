@@ -4,7 +4,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import ProjectBoard from "../helper/ProjectBoard";
-import { tasks as T, TaskCategory, TaskType } from "@/types/task.type";
+import {
+  tasks as T,
+  TaskCategory,
+  TaskType,
+  ViewType
+} from "@/types/task.type";
 import {
   closestCorners,
   DndContext,
@@ -13,10 +18,22 @@ import {
   useSensors,
   useSensor,
   PointerSensor,
-  KeyboardSensor
+  KeyboardSensor,
+  DragOverEvent,
+  UniqueIdentifier
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from "../ui/select";
+import TableWithFeature from "../helper/TableWithFeature";
 const Switcher = () => {
   const [items] = useState([
     { id: 1, name: "All Tasks" },
@@ -73,13 +90,14 @@ const ViewProject = () => {
   });
 
   const [activeId, setActiveId] = useState<number | null>(null);
+  const [viewType, setViewType] = useState<ViewType>("List");
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  const findContainer = (id: string | number) => {
+  const findContainer = (id: UniqueIdentifier) => {
     return Object.keys(tasks).find((key) =>
       tasks[key as keyof TaskCategory].some((task) => task.id === id)
     );
@@ -89,10 +107,15 @@ const ViewProject = () => {
     setActiveId(event.active.id as number);
   };
 
-  const handleDragOver = (event: any) => {
+  const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
+
+    if (over === null) return;
+
     const activeContainer = findContainer(active.id);
     const overContainer = findContainer(over.id);
+
+    console.log(activeContainer, overContainer, "containters");
 
     if (!activeContainer || !overContainer || activeContainer === overContainer)
       return;
@@ -120,9 +143,14 @@ const ViewProject = () => {
     });
   };
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    const activeContainer = findContainer(active.id);
+
+    if (over === null) return;
+
+    const activeContainer = findContainer(active.id) as
+      | keyof TaskCategory
+      | undefined;
     const overContainer = findContainer(over.id);
 
     if (!activeContainer || !overContainer || activeContainer !== overContainer)
@@ -170,28 +198,46 @@ const ViewProject = () => {
         </h1>
         <div className="mt-4 flex items-center justify-between">
           <Switcher />
-          <div className="flex w-full max-w-sm items-center space-x-2">
-            <Input type="text" placeholder="Search task.." />
-            <Button type="submit">Search</Button>
+          <div className="flex items-center space-x-4">
+            <div className="flex w-full max-w-sm items-center space-x-2">
+              <Input type="text" placeholder="Search task.." />
+              <Button type="submit">Search</Button>
+            </div>
+            <Select onValueChange={(value: ViewType) => setViewType(value)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select View" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value={"Board"}>Board</SelectItem>
+                  <SelectItem value={"List"}>List</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         </div>
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCorners}
-          onDragStart={handleDragStart}
-          onDragOver={handleDragOver}
-          onDragEnd={handleDragEnd}
-        >
-          <div className="mt-8 grid grid-cols-4 gap-4">
-            {Object.keys(tasks).map((section) => (
-              <ProjectBoard
-                key={section}
-                category={section}
-                items={tasks[section as keyof TaskCategory]}
-              />
-            ))}
-          </div>
-        </DndContext>
+
+        {viewType === "List" ? (
+          <TableWithFeature task={T.inprogress} />
+        ) : viewType === "Board" ? (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCorners}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDragEnd={handleDragEnd}
+          >
+            <div className="mt-8 grid grid-cols-4 gap-4">
+              {Object.keys(tasks).map((section) => (
+                <ProjectBoard
+                  key={section}
+                  category={section}
+                  items={tasks[section as keyof TaskCategory]}
+                />
+              ))}
+            </div>
+          </DndContext>
+        ) : null}
       </section>
     </div>
   );

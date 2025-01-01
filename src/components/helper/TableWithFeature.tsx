@@ -1,89 +1,84 @@
+"use client";
+
+import React from "react";
+import {
+  useReactTable,
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel
+} from "@tanstack/react-table";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow
-} from "@/components/ui/table";
+} from "../ui/table";
+import { TaskCategory } from "@/types/task.type";
 
-const invoices = [
-  {
-    invoice: "INV001",
-    paymentStatus: "Paid",
-    totalAmount: "$250.00",
-    paymentMethod: "Credit Card"
-  },
-  {
-    invoice: "INV002",
-    paymentStatus: "Pending",
-    totalAmount: "$150.00",
-    paymentMethod: "PayPal"
-  },
-  {
-    invoice: "INV003",
-    paymentStatus: "Unpaid",
-    totalAmount: "$350.00",
-    paymentMethod: "Bank Transfer"
-  },
-  {
-    invoice: "INV004",
-    paymentStatus: "Paid",
-    totalAmount: "$450.00",
-    paymentMethod: "Credit Card"
-  },
-  {
-    invoice: "INV005",
-    paymentStatus: "Paid",
-    totalAmount: "$550.00",
-    paymentMethod: "PayPal"
-  },
-  {
-    invoice: "INV006",
-    paymentStatus: "Pending",
-    totalAmount: "$200.00",
-    paymentMethod: "Bank Transfer"
-  },
-  {
-    invoice: "INV007",
-    paymentStatus: "Unpaid",
-    totalAmount: "$300.00",
-    paymentMethod: "Credit Card"
-  }
-];
+// Define columns
+const columnHelper = createColumnHelper();
+// const columns = [
+//   columnHelper.accessor("name", {
+//     header: "Name"
+//   }),
+//   columnHelper.accessor("status", {
+//     header: "Status"
+//   }),
+//   columnHelper.accessor("priority", {
+//     header: "Priority"
+//   })
+// ];
 
-export function TableWithFeature() {
+const TableWithFeature = ({ task }: { task: any[] }) => {
+  const keys = Object.keys(task[0]);
+
+  console.log(keys, "keys");
+
+  const columns = keys.map((key) =>
+    columnHelper.accessor(key, {
+      header: key
+    })
+  );
+
+  const table = useReactTable({
+    data: task,
+    columns,
+    getCoreRowModel: getCoreRowModel()
+  });
+
+  console.log(table, "table");
+
   return (
     <Table>
       <TableHeader>
-        <TableRow>
-          <TableHead className="w-[100px]">ID</TableHead>
-          <TableHead>Task</TableHead>
-          <TableHead>Description</TableHead>
-          <TableHead>Assignee</TableHead>
-          <TableHead>Due Date</TableHead>
-          <TableHead>Priority</TableHead>
-          <TableHead>Progress</TableHead>
-          <TableHead className="text-right">Status</TableHead>
-        </TableRow>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <TableHead key={header.id}>
+                {flexRender(
+                  header.column.columnDef.header,
+                  header.getContext()
+                )}
+              </TableHead>
+            ))}
+          </TableRow>
+        ))}
       </TableHeader>
       <TableBody>
-        {invoices.map((invoice) => (
-          <TableRow key={invoice.invoice}>
-            <TableCell className="font-medium">{invoice.invoice}</TableCell>
-            <TableCell>{invoice.paymentMethod}</TableCell>
-            <TableCell>{invoice.paymentStatus}</TableCell>
-            <TableCell>{invoice.paymentStatus}</TableCell>
-            <TableCell>{invoice.paymentStatus}</TableCell>
-            <TableCell>{invoice.paymentStatus}</TableCell>
-            <TableCell>{invoice.paymentStatus}</TableCell>
-            <TableCell className="text-right">{invoice.totalAmount}</TableCell>
+        {table.getRowModel().rows.map((row) => (
+          <TableRow key={row.id}>
+            {row.getVisibleCells().map((cell) => (
+              <TableCell key={cell.id}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </TableCell>
+            ))}
           </TableRow>
         ))}
       </TableBody>
-      <TableFooter></TableFooter>
     </Table>
   );
-}
+};
+
+export default TableWithFeature;
